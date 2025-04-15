@@ -1,0 +1,31 @@
+{% extends 'main.html' %} {% block content %}
+
+<div class="container mt-4">
+  <h2 class="mb-4">Importar Productos</h2>
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="needs-validation"
+    novalidate
+  >
+    {% csrf_token %}
+    <div class="mb-3">{{ form.as_p }}</div>
+    <button type="submit" class="btn btn-primary">Importar CSV</button>
+    <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Cancelar</a>
+  </form>
+
+  {% if messages %}
+  <div class="mt-4">
+    {% for message in messages %}
+    <div
+      class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}"
+      role="alert"
+    >
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}

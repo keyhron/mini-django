@@ -1,0 +1,11 @@
+{% extends 'main.html' %} {% block content %}
+<div class="mb-3">
+  <h2>Exportar Productos</h2>
+</div>
+
+<form method="post">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Exportar Productos</button>
+  <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Cancelar</a>
+</form>
+{% endblock %}

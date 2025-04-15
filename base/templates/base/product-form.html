@@ -1,0 +1,17 @@
+{% extends 'main.html' %} {% block content %}
+
+<div class="row">
+  <div class="col-md-12 mb-4">
+    <h2>Crear Producto</h2>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {{ form.as_p }}
+
+      <button type="submit" class="btn btn-primary">
+        {% if form.instance.pk %}Editar{% else %}Crear{% endif %} Producto
+      </button>
+      <a class="btn btn-dark" href="{{request.META.HTTP_REFERER}}">Cancelar</a>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

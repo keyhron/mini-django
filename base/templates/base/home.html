@@ -1,0 +1,104 @@
+{% extends 'main.html' %} {% block content %}
+
+<h2 class="mb-3">Lista de Productos</h2>
+
+<form method="get">
+  {{ form.as_p }}
+
+  <div class="mt-2 mb-3">
+    <button type="submit" class="btn btn-primary">Filtrar y Buscar</button>
+    <a href="{% url 'home' %}" class="btn btn-danger">Limpiar Filtros</a>
+  </div>
+</form>
+
+<div class="row">
+  {% if products %} {% for product in products %}
+  <div class="col-md-4 mb-4" id="product-container-{{ product.id }}">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <strong>{{ product.name }}</strong>
+        </h5>
+
+        {% if product.description %}
+        <strong>Descripción:</strong>
+        <p class="card-text">{{ product.description }}</p>
+        {% endif %}
+
+        <strong>Precio:</strong>
+        <p class="card-text">
+          {% if product.price %} ${{ product.price }} {% else %} No se ha
+          asignado un precio {% endif %}
+        </p>
+
+        <div>
+          <strong>Categorías:</strong>
+          {% for category in product.categories.all %}
+          <span class="badge text-bg-warning">{{ category.name }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="mb-3">
+          <strong>Hubs:</strong>
+          {% for hub in product.hubs.all %}
+          <span class="badge text-bg-success">{{ hub.name }}</span>
+          {% endfor %}
+        </div>
+
+        <a href="{% url 'update-product' product.id %}" class="btn btn-primary"
+          >Editar</a
+        >
+
+        <button
+          class="btn btn-danger"
+          onclick="deleteProduct(this)"
+          data-id="{{ product.id }}"
+          data-name="{{ product.name }}"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+  {% endfor %} {% else %} No hay productos. {% endif %}
+</div>
+
+<script>
+  const deleteProduct = async (button) => {
+    const productId = button.getAttribute("data-id");
+    const productName = button.getAttribute("data-name");
+
+    try {
+      if (
+        confirm(
+          `¿Estás seguro de que deseas eliminar este producto: ${productName}?`
+        )
+      ) {
+        const response = await fetch(`/delete-product/${productId}/`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({}),
+        });
+        if (response.ok) {
+          const productContainer = document.getElementById(
+            `product-container-${productId}`
+          );
+
+          if (productContainer) {
+            productContainer.remove();
+            alert(`Producto "${productName}" eliminado.`);
+          }
+        } else {
+          alert("Error al eliminar el producto.");
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al eliminar el producto.");
+    }
+  };
+</script>
+{% endblock %}
